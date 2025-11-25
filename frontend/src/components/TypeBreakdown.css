@@ -1,0 +1,86 @@
+.type-breakdown {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.type-breakdown-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+}
+
+.type-breakdown-empty {
+  color: #999;
+  text-align: center;
+  padding: 20px;
+}
+
+.type-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.type-breakdown-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.type-breakdown-item-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.type-breakdown-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.type-breakdown-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.type-breakdown-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+
+.type-breakdown-bar-container {
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.type-breakdown-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.type-breakdown-percentage {
+  font-size: 12px;
+  color: #999;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .type-breakdown {
+    padding: 16px;
+  }
+
+  .type-breakdown-list {
+    gap: 14px;
+  }
+}
