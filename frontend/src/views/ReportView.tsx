@@ -10,6 +10,7 @@ import SkeletonLoader from '../components/SkeletonLoader';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import { generateReportPDF, formatDateForFilename } from '../utils/pdfExport';
+import { generateExcelReport, generateCombinedReport } from '../utils/excelExport';
 import { useNotification } from '../context/NotificationContext';
 import { getFriendlyErrorMessage } from '../utils/errorMessages';
 import './Views.css';
@@ -32,6 +33,8 @@ const ReportView: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | null>(null);
   const [exportingPDF, setExportingPDF] = useState(false);
+  const [exportingExcel, setExportingExcel] = useState(false);
+  const [exportingCombined, setExportingCombined] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
 
   const fetchData = async (range?: DateRange) => {
@@ -109,25 +112,79 @@ const ReportView: React.FC = () => {
     
     try {
       // Generate filename based on date range
-      let filename = 'trash-report';
+      let filename = 'mangalore-trash-report';
       if (dateRange) {
         const startStr = formatDateForFilename(dateRange.start);
         const endStr = formatDateForFilename(dateRange.end);
-        filename = `trash-report-${startStr}-to-${endStr}.pdf`;
+        filename = `mangalore-trash-report-${startStr}-to-${endStr}.pdf`;
       } else {
-        filename = `trash-report-${formatDateForFilename(new Date())}.pdf`;
+        filename = `mangalore-trash-report-${formatDateForFilename(new Date())}.pdf`;
       }
 
       await generateReportPDF('report-content', {
         filename,
         dateRange: dateRange || undefined,
       });
-      showSuccess('PDF exported successfully!');
+      showSuccess('PDF report exported successfully!');
     } catch (err) {
       console.error('Failed to generate PDF:', err);
       showError('Failed to generate PDF. Please try again.');
     } finally {
       setExportingPDF(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    setExportingExcel(true);
+    
+    try {
+      if (!statistics) {
+        showError('Statistics not loaded. Please wait and try again.');
+        return;
+      }
+
+      // Generate filename based on date range
+      let filename = 'mangalore-trash-data';
+      if (dateRange) {
+        const startStr = formatDateForFilename(dateRange.start);
+        const endStr = formatDateForFilename(dateRange.end);
+        filename = `mangalore-trash-data-${startStr}-to-${endStr}.xlsx`;
+      } else {
+        filename = `mangalore-trash-data-${formatDateForFilename(new Date())}.xlsx`;
+      }
+
+      await generateExcelReport(entries, statistics, {
+        filename,
+        dateRange: dateRange || undefined,
+        includeStatistics: true
+      });
+      showSuccess('Excel report exported successfully!');
+    } catch (err) {
+      console.error('Failed to generate Excel:', err);
+      showError('Failed to generate Excel report. Please try again.');
+    } finally {
+      setExportingExcel(false);
+    }
+  };
+
+  const handleExportCombined = async () => {
+    setExportingCombined(true);
+    
+    try {
+      if (!statistics) {
+        showError('Statistics not loaded. Please wait and try again.');
+        return;
+      }
+
+      await generateCombinedReport(entries, statistics, 'report-content', {
+        dateRange: dateRange || undefined,
+      });
+      showSuccess('Combined PDF + Excel reports exported successfully!');
+    } catch (err) {
+      console.error('Failed to generate combined report:', err);
+      showError('Failed to generate reports. Please try again.');
+    } finally {
+      setExportingCombined(false);
     }
   };
 
@@ -171,20 +228,53 @@ const ReportView: React.FC = () => {
               }
             }}
           />
-          <button 
-            className="export-pdf-button"
-            onClick={handleExportPDF}
-            disabled={loading || exportingPDF || !statistics}
-          >
-            {exportingPDF ? (
-              <>
-                <span className="button-spinner"></span>
-                Generating...
-              </>
-            ) : (
-              '📄 Export PDF'
-            )}
-          </button>
+          <div className="export-buttons">
+            <button 
+              className="export-excel-button"
+              onClick={handleExportExcel}
+              disabled={loading || exportingExcel || !statistics}
+              title="Export detailed Excel report with all trash entries and locations"
+            >
+              {exportingExcel ? (
+                <>
+                  <span className="button-spinner"></span>
+                  Generating...
+                </>
+              ) : (
+                '📊 Export Excel'
+              )}
+            </button>
+            <button 
+              className="export-pdf-button"
+              onClick={handleExportPDF}
+              disabled={loading || exportingPDF || !statistics}
+              title="Export PDF report with map visualization"
+            >
+              {exportingPDF ? (
+                <>
+                  <span className="button-spinner"></span>
+                  Generating...
+                </>
+              ) : (
+                '📄 Export PDF'
+              )}
+            </button>
+            <button 
+              className="export-combined-button"
+              onClick={handleExportCombined}
+              disabled={loading || exportingCombined || !statistics}
+              title="Export both Excel data and PDF map report"
+            >
+              {exportingCombined ? (
+                <>
+                  <span className="button-spinner"></span>
+                  Generating...
+                </>
+              ) : (
+                '📋 Export Both'
+              )}
+            </button>
+          </div>
           <button 
             className="copy-link-button"
             onClick={handleCopyLink}

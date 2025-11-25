@@ -13,16 +13,24 @@
   width: 100%;
 }
 
-.export-pdf-button {
+.export-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 0.5rem);
+  width: 100%;
+}
+
+.export-excel-button,
+.export-pdf-button,
+.export-combined-button {
   padding: 0.75rem 1.25rem;
-  background: var(--color-primary, #3498db);
   color: white;
   border: none;
   border-radius: var(--radius-md, 6px);
   cursor: pointer;
   font-size: var(--font-size-base, 1rem);
   font-weight: var(--font-weight-medium, 500);
-  transition: background var(--transition-base, 0.2s);
+  transition: all var(--transition-base, 0.2s);
   min-height: var(--touch-target-min, 44px);
   width: 100%;
   touch-action: manipulation;
@@ -32,17 +40,45 @@
   gap: var(--spacing-sm, 0.5rem);
 }
 
-.export-pdf-button:hover:not(:disabled) {
-  background: var(--color-primary-dark, #2980b9);
+.export-excel-button {
+  background: #27ae60;
 }
 
-.export-pdf-button:disabled {
+.export-excel-button:hover:not(:disabled) {
+  background: #229954;
+  transform: translateY(-1px);
+}
+
+.export-pdf-button {
+  background: #e74c3c;
+}
+
+.export-pdf-button:hover:not(:disabled) {
+  background: #c0392b;
+  transform: translateY(-1px);
+}
+
+.export-combined-button {
+  background: var(--color-primary, #3498db);
+}
+
+.export-combined-button:hover:not(:disabled) {
+  background: var(--color-primary-dark, #2980b9);
+  transform: translateY(-1px);
+}
+
+.export-excel-button:disabled,
+.export-pdf-button:disabled,
+.export-combined-button:disabled {
   background: var(--color-text-muted, #95a5a6);
   cursor: not-allowed;
   opacity: 0.6;
+  transform: none;
 }
 
-.export-pdf-button:active:not(:disabled) {
+.export-excel-button:active:not(:disabled),
+.export-pdf-button:active:not(:disabled),
+.export-combined-button:active:not(:disabled) {
   transform: scale(0.98);
 }
 
@@ -239,10 +275,17 @@
     width: auto;
   }
 
+  .export-buttons {
+    flex-direction: row;
+    width: auto;
+  }
+
+  .export-excel-button,
   .export-pdf-button,
+  .export-combined-button,
   .copy-link-button {
     width: auto;
-    min-width: 140px;
+    min-width: 120px;
   }
 
   .stats-grid {
